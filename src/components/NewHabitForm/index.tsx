@@ -1,8 +1,42 @@
 import { Check } from 'phosphor-react'
+import { FormEvent, useState } from 'react'
+import { CheckboxWeekDay } from '../Checkbox/CheckboxWeekDay'
+
+const availableWeekDays = [
+  'Domingo',
+  'Segunda-feira',
+  'Terça-feira',
+  'Quarta-feira',
+  'Quinta-feira',
+  'Sexta-feira',
+  'Sábado',
+]
 
 export function NewHabitForm() {
+  const [title, setTitle] = useState('')
+  const [weekDays, setWeekDays] = useState<number[]>([])
+
+  function createNewHabit(event: FormEvent) {
+    event.preventDefault()
+
+    console.log(title)
+    console.log(weekDays)
+  }
+
+  function handleToggleWeekDay(weekDay: number) {
+    if (weekDays.includes(weekDay)) {
+      const weekDaysWithRemoveOne = weekDays.filter((day) => day !== weekDay)
+
+      setWeekDays(weekDaysWithRemoveOne)
+    } else {
+      const weekDaysWithRemoveOne = [...weekDays, weekDay]
+
+      setWeekDays(weekDaysWithRemoveOne)
+    }
+  }
+
   return (
-    <form className="w-full flex flex-col mt-6">
+    <form onSubmit={createNewHabit} className="w-full flex flex-col mt-6">
       <label htmlFor="title" className="font-semibold leading-tight">
         Qual é o seu comprometimento
       </label>
@@ -13,11 +47,22 @@ export function NewHabitForm() {
         placeholder="ex: Exercícios, dormir bem, etc..."
         className="p-4 rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400"
         autoFocus
+        onChange={(event) => setTitle(event.target.value)}
       />
 
       <label htmlFor="" className="font-semibold leading-tight mt-4">
         Qual é a recorrência?
       </label>
+
+      <div className="flex flex-col gap-2 mt-3">
+        {availableWeekDays.map((weekday, index) => (
+          <CheckboxWeekDay
+            key={index}
+            getWeekDays={() => handleToggleWeekDay(index)}
+            title={weekday}
+          />
+        ))}
+      </div>
 
       <button
         type="submit"
