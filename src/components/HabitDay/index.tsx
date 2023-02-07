@@ -1,23 +1,29 @@
 import * as Popover from '@radix-ui/react-popover'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import { CheckboxHabit } from '../Checkbox/CheckboxHabit'
 import { ProgressBar } from '../ProgressBar'
 
 interface HabitDayProps {
-  completed: number
-  amount: number
+  date: Date
+  completed?: number
+  amount?: number
 }
 
-export function HabitDay(props: HabitDayProps) {
-  const completedPercentage = Math.round((props.completed / props.amount) * 100)
+export function HabitDay({ amount = 0, completed = 0, date }: HabitDayProps) {
+  const completedPercentage =
+    amount > 0 ? Math.round((completed / amount) * 100) : 0
+
+  const dayAndMonth = dayjs(date).format('DD/MM')
+  const dayOfWeek = dayjs(date).format('dddd')
 
   return (
     <Popover.Root>
       <Popover.Trigger
-        className={clsx('w-10 h-10 bg-zinc-900 border-zinc-800 rounded-lg', {
+        className={clsx('w-10 h-10 border-2 rounded-lg', {
           'bg-zinc-900 border-zinc-800': completedPercentage === 0,
           'bg-pink-900 border-pink-700':
-            completedPercentage >= 0 && completedPercentage < 20,
+            completedPercentage > 0 && completedPercentage < 20,
           'bg-pink-800 border-pink-600':
             completedPercentage >= 20 && completedPercentage < 40,
           'bg-pink-700 border-pink-500':
@@ -30,9 +36,9 @@ export function HabitDay(props: HabitDayProps) {
 
       <Popover.Portal>
         <Popover.Content className="min-w-[320px] rounded-t-2xl bg-zinc-900 flex flex-col p-6">
-          <span className="font-semibold text-zinc-400">segunda-feira</span>
+          <span className="font-semibold text-zinc-400">{dayOfWeek}</span>
           <span className="mt-1 font-extrabold leading-tight text-2xl">
-            17/01
+            {dayAndMonth}
           </span>
 
           <ProgressBar progress={completedPercentage} />
